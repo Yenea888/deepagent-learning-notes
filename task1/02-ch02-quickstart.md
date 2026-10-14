@@ -1,6 +1,7 @@
 # 第 2 章：快速上手——我的第一个工具 Agent
 
 学习日期：2026-10-14  
+补充完成：2026-10-15（offline Notebook）  
 课程正文：[第 2 章：快速上手](https://datawhalechina.github.io/deepagents-in-action/chapters/ch02-quickstart/)
 
 ## 这一章学习什么
@@ -149,23 +150,38 @@ search 依赖组：Tavily 搜索库
 
 ## 实际结果与证据
 
-当前状态：**尚未运行第 2 章 Notebook。**
+当前状态：**已完成第 2 章 Notebook 的 offline 学习。**
 
-因此本笔记不把网页中的示例输出写成自己的运行结果。完成后应补充以下证据：
+本次使用的入口：
 
 ```text
-1. 运行模式为 offline；
-2. get_weather 的工具调用参数；
-3. 对应 ToolMessage 的 success 状态与返回值；
-4. 计算器的两对“请求 → 返回”；
-5. 参数校验错误与函数内部异常的实际输出。
+notebooks/ch02/01-quickstart.ipynb
+```
+
+已确认的关键现象：
+
+```text
+1. Deep Agent 收到“北京天气”问题后，请求 get_weather(city="北京")；
+2. 工具成功返回：It's always sunny in 北京!；
+3. 工具请求与工具结果使用相同调用 ID 关联；
+4. 100 USD 换算为 720 CNY 后，Agent 再计算 720 × 1.08，结果为 777.6；
+5. amount="a lot" 会被类型校验拦截，形成 status="error" 的 ToolMessage；
+6. JPY 不在汇率表中时，工具内部抛出 KeyError，整次 invoke() 停止。
+```
+
+这证明类型标注不只是给人看的注释：框架会用它校验模型传给工具的参数。也证明多工具任务的关键是前一个工具的真实输出，要被后一个工具调用使用。
+
+学习中保留的观察重点：
+
+```text
+模型最终回答只是总结；
+ToolMessage 的 status、参数和返回值才是工具正确执行的证据。
 ```
 
 ## 下一步修正
 
-1. 在 PyCharm 打开 `notebooks/ch02/01-quickstart.ipynb`；
-2. 选择已经配置好的 `Deep Agents course` 内核；
-3. 保持 offline，从第一格依次运行；
-4. 先只跑天气 Agent 和计算器 Agent；
-5. 保存实际输出后，补到本笔记的“实际结果与证据”部分；
-6. 完成基础工具练习后，再进入研究助手和 AgentSeek 模板项目。
+1. 运行 `notebooks/ch02/02-research-assistant.ipynb`，观察本地搜索样例、Todo 和虚拟文件如何协作；
+2. 再创建 `deepagents/default` AgentSeek 模板项目；
+3. 在生成项目中修改一项 `system_prompt` 和一个简单工具；
+4. 配好模型环境变量后，跑通第一个独立的真实 Agent；
+5. 将模板项目的创建命令、实际输出与问题补充到 Task0 和本笔记。
